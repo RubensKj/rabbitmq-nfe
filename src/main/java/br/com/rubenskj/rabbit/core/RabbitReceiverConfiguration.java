@@ -51,7 +51,7 @@ public class RabbitReceiverConfiguration {
             this.eventPublisher.publish(nFeReceivedEvent);
         };
 
-        channel.basicConsume(NFE_RECEIVED, false, deliverCallback, consumerTag -> {
+        channel.basicConsume(NFE_RECEIVED, true, deliverCallback, consumerTag -> {
             log.info("consumerTag -> {}", consumerTag);
         });
     }
