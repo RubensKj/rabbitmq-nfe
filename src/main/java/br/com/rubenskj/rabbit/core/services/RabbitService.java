@@ -2,6 +2,7 @@ package br.com.rubenskj.rabbit.core.services;
 
 import br.com.rubenskj.rabbit.core.models.NFe;
 import br.com.rubenskj.rabbit.core.models.Retry;
+import br.com.rubenskj.rabbit.core.properties.RabbitProperty;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -20,9 +21,11 @@ import static br.com.rubenskj.rabbit.core.utils.RabbitExchangesDeclare.NFE_UPDAT
 @Service
 public class RabbitService {
 
+    private final RabbitProperty rabbitProperty;
     private final RetryService retryService;
 
-    public RabbitService(RetryService retryService) {
+    public RabbitService(RabbitProperty rabbitProperty, RetryService retryService) {
+        this.rabbitProperty = rabbitProperty;
         this.retryService = retryService;
     }
 
@@ -80,9 +83,9 @@ public class RabbitService {
 
         factory.setRequestedChannelMax(5);
 
-        factory.setHost("localhost");
-        factory.setUsername("admin");
-        factory.setPassword("admin");
+        factory.setHost(this.rabbitProperty.getHost());
+        factory.setUsername(this.rabbitProperty.getUsername());
+        factory.setPassword(this.rabbitProperty.getPassword());
 
         return factory.newConnection();
     }

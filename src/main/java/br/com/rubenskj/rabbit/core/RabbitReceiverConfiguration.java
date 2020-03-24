@@ -10,9 +10,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -33,7 +33,7 @@ public class RabbitReceiverConfiguration {
         this.eventPublisher = eventPublisher;
     }
 
-    @Bean
+    @PostConstruct
     public void handleNFeReceived() throws IOException {
         Connection connection = this.rabbitService.createConnection();
         Channel channel = connection.createChannel();
@@ -42,7 +42,7 @@ public class RabbitReceiverConfiguration {
         log.info("Waiting for " + NFE_RECEIVED + ".");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            log.info("Receiving message");
+            log.info("Receiving message - " + NFE_RECEIVED);
             String ticketUUID = new String(delivery.getBody(), StandardCharsets.UTF_8);
 
             NFe nFe = this.nFeService.findByTicketUUID(ticketUUID);
@@ -56,7 +56,7 @@ public class RabbitReceiverConfiguration {
         });
     }
 
-    @Bean
+    @PostConstruct
     public void handleNFeUpdateStatus() throws IOException {
         Connection connection = this.rabbitService.createConnection();
         Channel channel = connection.createChannel();
@@ -65,7 +65,7 @@ public class RabbitReceiverConfiguration {
         log.info("Waiting for " + NFE_UPDATE_STATUS + ".");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            log.info("Receiving message");
+            log.info("Receiving message - " + NFE_UPDATE_STATUS);
             String ticketUUID = new String(delivery.getBody(), StandardCharsets.UTF_8);
 
             NFe nFe = this.nFeService.findByTicketUUID(ticketUUID);

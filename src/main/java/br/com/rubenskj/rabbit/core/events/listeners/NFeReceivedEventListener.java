@@ -10,6 +10,7 @@ import br.com.rubenskj.rabbit.core.utils.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 
@@ -26,7 +27,7 @@ public class NFeReceivedEventListener implements ListenerAdapter<NFeReceivedEven
     }
 
     @Override
-    public void execute(NFeReceivedEvent event) throws Exception {
+    public void execute(NFeReceivedEvent event) {
         log.info("Handling NFeReceived");
         log.info("Validating with SeFaz");
 
@@ -36,7 +37,7 @@ public class NFeReceivedEventListener implements ListenerAdapter<NFeReceivedEven
         try {
             ResponseEntity<RespostaSefaz> respostaSefazResponseEntity = restTemplate.postForEntity(uriComponents.toUriString(), event.getNFe(), RespostaSefaz.class);
             handleRespostaSefaz(respostaSefazResponseEntity, event.getNFe());
-        } catch (Exception e) {
+        } catch (RestClientResponseException e) {
             log.info("Cannot communicate with SeFaz. Putting NFe on retry");
             this.rabbitService.putNFeOnRetry(event.getNFe());
 
