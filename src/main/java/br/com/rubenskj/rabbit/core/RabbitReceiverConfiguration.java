@@ -37,7 +37,7 @@ public class RabbitReceiverConfiguration {
     public void handleNFeReceived() throws IOException {
         Connection connection = this.rabbitService.createConnection();
         Channel channel = connection.createChannel();
-        channel.queueDeclare("nfe-received", false, false, false, null);
+        channel.queueDeclare(NFE_RECEIVED, false, false, false, null);
 
         log.info("Waiting for " + NFE_RECEIVED + ".");
 
@@ -51,7 +51,7 @@ public class RabbitReceiverConfiguration {
             this.eventPublisher.publish(nFeReceivedEvent);
         };
 
-        channel.basicConsume("nfe-received", true, deliverCallback, consumerTag -> {
+        channel.basicConsume(NFE_RECEIVED, false, deliverCallback, consumerTag -> {
             log.info("consumerTag -> {}", consumerTag);
         });
     }

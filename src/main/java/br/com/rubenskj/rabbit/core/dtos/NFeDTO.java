@@ -14,4 +14,9 @@ public class NFeDTO {
     private String id;
     private String productName;
     private BigDecimal price;
+
+    public NFeDTO(String productName, BigDecimal price) {
+        this.productName = productName;
+        this.price = price;
+    }
 }
